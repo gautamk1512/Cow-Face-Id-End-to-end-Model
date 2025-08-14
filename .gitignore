@@ -1,0 +1,117 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# PyTorch Models
+*.pt
+*.pth
+*.onnx
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Training outputs
+runs/
+logs/
+wandb/
+output/
+demo_output/
+
+# Data directories (uncomment if you don't want to track data)
+# data/
+# datasets/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Cache files
+.cache/
+*.cache
+
+# Generated documentation
+docs/_build/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# Large files
+*.zip
+*.tar.gz
+*.tar
+*.rar
+
+# Windows specific
+desktop.ini
+$RECYCLE.BIN/
+
+# Mac specific
+.AppleDouble
+.LSOverride
+Icon
+
+# Linux specific
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Model checkpoints (large files)
+# Uncomment the next line if model files are too large for git
+# *.pt
+# *.pth
+
+# YOLOv5 cache
+*.cache

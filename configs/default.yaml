@@ -1,0 +1,27 @@
+# Default configuration for Cow Face ID
+model:
+  vit_name: vit_base_patch16_224
+  pretrained: true
+  embed_dim: 512
+  arcface:
+    scale: 64.0
+    margin: 0.5
+
+input:
+  img_size: 224
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+train:
+  epochs: 20
+  batch_size: 32
+  lr: 0.0001
+  weight_decay: 0.05
+  num_workers: 4
+  amp: true
+  seed: 42
+  val_interval: 1
+
+augment:
+  hflip_prob: 0.5
+  color_jitter: [0.1, 0.1, 0.1, 0.05]
