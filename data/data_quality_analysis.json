@@ -1,0 +1,14 @@
+{
+  "training": {
+    "cow_001": 8,
+    "cow_002": 8,
+    "cow_003": 0,
+    "human": 0
+  },
+  "validation": {
+    "cow_001": 2,
+    "cow_002": 2,
+    "cow_003": 0,
+    "human": 0
+  }
+}

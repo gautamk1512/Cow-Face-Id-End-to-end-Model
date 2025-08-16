@@ -1,0 +1,55 @@
+augment:
+  color_jitter:
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.1
+  gaussian_blur: 0.1
+  hflip_prob: 0.5
+  mixup_alpha: 0.2
+  random_crop_scale:
+  - 0.8
+  - 1.0
+  random_erasing: 0.1
+  rotation_degrees: 15
+input:
+  img_size: 224
+  mean:
+  - 0.485
+  - 0.456
+  - 0.406
+  std:
+  - 0.229
+  - 0.224
+  - 0.225
+model:
+  arcface:
+    easy_margin: false
+    margin: 0.5
+    scale: 64.0
+  dropout: 0.1
+  embed_dim: 512
+  pretrained: true
+  vit_name: vit_base_patch16_224
+optimizer:
+  betas:
+  - 0.9
+  - 0.999
+  eps: 1.0e-08
+  type: AdamW
+scheduler:
+  T_0: 10
+  T_mult: 2
+  eta_min: 1.0e-06
+  type: CosineAnnealingWarmRestarts
+train:
+  amp: true
+  batch_size: 16
+  early_stopping_patience: 10
+  epochs: 50
+  gradient_clip_val: 1.0
+  lr: 0.0001
+  num_workers: 4
+  seed: 42
+  val_interval: 1
+  weight_decay: 0.01

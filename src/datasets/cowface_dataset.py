@@ -8,11 +8,12 @@ import torchvision.transforms as T
 
 
 class CowFaceDataset(Dataset):
-	def __init__(self, root_dir: str, img_size: int = 224, mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), is_train: bool = True, hflip_prob: float = 0.5, color_jitter=(0.1, 0.1, 0.1, 0.05)):
+	def __init__(self, root_dir: str, img_size: int = 224, mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), is_train: bool = True, hflip_prob: float = 0.5, color_jitter=(0.1, 0.1, 0.1, 0.05), transforms=None):
 		self.root_dir = Path(root_dir)
 		self.samples = []
 		self.class_to_idx = {}
 		self.idx_to_class = []
+		self.image_paths = []
 
 		# Scan folders
 		for idx, cls_dir in enumerate(sorted([p for p in self.root_dir.iterdir() if p.is_dir()])):
@@ -20,27 +21,35 @@ class CowFaceDataset(Dataset):
 			self.idx_to_class.append(cls_dir.name)
 			for img_path in sorted(cls_dir.rglob("*.jpg")) + sorted(cls_dir.rglob("*.png")) + sorted(cls_dir.rglob("*.jpeg")):
 				self.samples.append((img_path, idx))
+				self.image_paths.append(img_path)
 
-		# Transforms
-		train_tfms = [
-			T.Resize((img_size, img_size)),
-			T.RandomHorizontalFlip(p=hflip_prob),
-			T.ColorJitter(*color_jitter),
-			T.ToTensor(),
-			T.Normalize(mean, std),
-		]
-		val_tfms = [
-			T.Resize((img_size, img_size)),
-			T.ToTensor(),
-			T.Normalize(mean, std),
-		]
-		self.transform = T.Compose(train_tfms if is_train else val_tfms)
+		# Setup transforms
+		if transforms is not None:
+			self.transform = transforms
+		else:
+			# Default transforms
+			train_tfms = [
+				T.Resize((img_size, img_size)),
+				T.RandomHorizontalFlip(p=hflip_prob),
+				T.ColorJitter(*color_jitter),
+				T.ToTensor(),
+				T.Normalize(mean, std),
+			]
+			val_tfms = [
+				T.Resize((img_size, img_size)),
+				T.ToTensor(),
+				T.Normalize(mean, std),
+			]
+			self.transform = T.Compose(train_tfms if is_train else val_tfms)
+		
+		# Create classes property for compatibility
+		self.classes = self.idx_to_class
 
 	def __len__(self) -> int:
 		return len(self.samples)
 
-	def __getitem__(self, index: int) -> Tuple[torch.Tensor, int, str]:
+	def __getitem__(self, index: int) -> Tuple[torch.Tensor, int]:
 		img_path, label = self.samples[index]
 		img = Image.open(img_path).convert("RGB")
 		img = self.transform(img)
-		return img, label, str(img_path)
+		return img, label

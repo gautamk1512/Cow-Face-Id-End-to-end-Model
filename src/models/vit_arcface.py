@@ -49,3 +49,29 @@ class ViTArcFaceModel(nn.Module):
 		if self.arcface is not None:
 			logits = self.arcface(embeddings, labels)
 		return embeddings, logits
+	
+	def get_embedding(self, x: torch.Tensor) -> torch.Tensor:
+		"""Get embedding for inference"""
+		return self.forward_features(x)
+
+
+class ViTArcFace(nn.Module):
+	"""Simplified interface for ViTArcFace model"""
+	def __init__(self, vit_name="vit_base_patch16_224", num_classes=None, embed_dim=512, pretrained=True):
+		super().__init__()
+		config = ViTArcFaceConfig(
+			vit_name=vit_name,
+			pretrained=pretrained,
+			embed_dim=embed_dim,
+			num_classes=num_classes
+		)
+		self.model = ViTArcFaceModel(config)
+	
+	def forward(self, x: torch.Tensor, labels: Optional[torch.Tensor] = None):
+		return self.model(x, labels)
+	
+	def get_embedding(self, x: torch.Tensor) -> torch.Tensor:
+		return self.model.get_embedding(x)
+	
+	def forward_features(self, x: torch.Tensor) -> torch.Tensor:
+		return self.model.forward_features(x)

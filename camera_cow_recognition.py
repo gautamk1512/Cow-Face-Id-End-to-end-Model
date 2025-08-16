@@ -44,9 +44,18 @@ class RealTimeCowRecognition:
         print(f"✅ System ready! Gallery contains {len(self.gallery_labels)} known cow faces")
         
     def _load_model(self, checkpoint_path):
-        # Get number of classes from gallery
-        gallery_path = Path("data/val")
-        num_classes = len([d for d in gallery_path.iterdir() if d.is_dir()])
+        # Load checkpoint first to get the number of classes
+        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        
+        # Get number of classes from checkpoint or config
+        if 'classes' in checkpoint:
+            num_classes = len(checkpoint['classes'])
+        elif 'config' in checkpoint and 'num_classes' in checkpoint['config']:
+            num_classes = checkpoint['config']['num_classes']
+        else:
+            # Fallback: count directories in gallery
+            gallery_path = Path("data/val")
+            num_classes = len([d for d in gallery_path.iterdir() if d.is_dir()])
         
         model = ViTArcFace(
             vit_name=self.config['model']['vit_name'],
@@ -55,8 +64,19 @@ class RealTimeCowRecognition:
             pretrained=False
         )
         
-        checkpoint = torch.load(checkpoint_path, map_location=self.device)
-        model.load_state_dict(checkpoint['model_state_dict'])
+        # Handle state_dict key mismatch by adding 'model.' prefix if needed
+        state_dict = checkpoint['model_state']
+        
+        # Check if we need to add 'model.' prefix
+        if 'backbone.cls_token' in state_dict and 'model.backbone.cls_token' not in state_dict:
+            # Add 'model.' prefix to all keys
+            new_state_dict = {}
+            for key, value in state_dict.items():
+                new_key = f"model.{key}"
+                new_state_dict[new_key] = value
+            state_dict = new_state_dict
+        
+        model.load_state_dict(state_dict)
         model.eval()
         return model.to(self.device)
     
